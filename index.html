@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>头痛影响评估表单</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .question {
+            display: none;
+        }
+
+        .question.active {
+            display: block;
+            animation: fadeIn 1s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        label {
+            display: block;
+            position: relative;
+            padding-left: 35px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            font-size: 22px;
+            user-select: none;
+        }
+
+        label input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 25px;
+            width: 25px;
+            background-color: #eee;
+            display: none;
+        }
+
+        label:hover input ~ .checkmark {
+            background-color: #ccc;
+        }
+
+        label input:checked ~ .checkmark {
+            background-color: #2196F3;
+            display: inline;
+        }
+
+        #result {
+            display: none;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>头痛影响评估表单</h1>
+    <form id="msq-form">
+    </form>
+    <button onclick="submitForm();" style="display:none;" id="submit-button">提交表单</button>
+    <div id="result"></div>
+    <script>
+        const questions = [
+            {
+                id: 1,
+                text: "在过去的4周内，偏头痛是否影响你与家人、朋友和其他亲近的人的相处?",
+                options: [
+                    { value: 6, text: "没有降低" },
+                    { value: 5, text: "略有降低" },
+                    { value: 4, text: "降低了一半" },
+                    { value: 3, text: "严重降低" },
+                    { value: 2, text: "非常严重降低" },
+                    { value: 1, text: "完全不能进行" },
+                ],
+            },
+            {
+                id: 2,
+                text: "在过去的4周内，偏头痛是否影响您的闲暇活动，如阅读或锻炼? ",
+                options: [
+                    { value: 6, text: "没有限制" },
+                    { value: 5, text: "略有限制" },
+                    { value: 4, text: "限制一半" },
+                    { value: 3, text:"严重限制" },
+                    { value: 2, text: "非常严重限制" },
+                    { value: 1, text: "完全不能进行" },
+                ],
+            },
+            {
+                id: 3,
+                text: "在过去的4周内，偏头痛症状是否导致您从事工作或日常活动有难度？",
+                options: [
+                    { value: 6, text: "没有影响" },
+                    { value: 5, text: "略有影响" },
+                    { value: 4, text: "影响一半" },
+                    { value: 3, text: "严重影响" },
+                    { value: 2, text: "非常严重影响" },
+                    { value: 1, text: "完全不能进行" },
+                ],
+            },
+             {
+                id: 4,
+                text: "在过去的4周里，偏头痛是否导致您在家或单位工作量下降？",
+                options: [
+                    { value: 6, text: "没有影响" },
+                    { value: 5, text: "略有影响" },
+                    { value: 4, text: "影响一半" },
+                    { value: 3, text: "严重影响" },
+                    { value: 2, text: "非常严重影响" },
+                    { value: 1, text: "完全不能进行" },
+                ],
+            },
+            {
+                id: 5,
+                text: "在过去的4周里，偏头痛是否会降低您专注于工作或日常活动的能力？",
+                options: [
+                    { value: 6, text: "没有影响" },
+                    { value: 5, text: "略有影响" },
+                    { value: 4, text: "影响一半" },
+                    { value: 3, text: "严重影响" },
+                    { value: 2, text: "非常严重影响" },
+                    { value: 1, text: "完全不能进行" },
+                ],
+            },
+             {
+                id: 6,
+                text: "在过去的4周里，偏头痛是否让你太累而无法进行工作或日常活动？",
+                options: [
+                    { value: 6, text: "没有影响" },
+                    { value: 5, text: "略有影响" },
+                    { value: 4, text: "影响一半" },
+                    { value: 3, text: "严重影响" },
+                    { value: 2, text: "非常严重影响" },
+                    { value: 1, text: "完全不能进行" },
+                ],
+            },
+             {
+                id: 7,
+                text: "在过去的4周里，偏头痛是否让您感觉精力充沛的天数减少？",
+                options: [
+                    { value: 6, text: "没有影响" },
+                    { value: 5, text: "略有影响" },
+                    { value: 4, text: "影响一半" },
+                    { value: 3, text: "严重影响" },
+                    { value: 2, text: "非常严重影响" },
+                    { value: 1, text: "完全没有精力" },
+                ],
+            },
+             {
+                id: 8,
+                text: "在过去的4周里，偏头痛是否让您不得不取消工作或日常活动？",
+                options: [
+                    { value: 6, text: "没有影响" },
+                    { value: 5, text: "略有影响" },
+                    { value: 4, text: "影响一半" },
+                    { value: 3, text: "严重影响" },
+                    { value: 2, text: "非常严重影响" },
+                    { value: 1, text: "完全不能进行" },
+                ],
+            },
+             {
+                id: 9,
+                text: "在过去的4周里，当你患有偏头痛时，您是否需要帮助来处理日常任务，如日常家务、做必要的生意、购物或照顾他人？",
+                options: [
+                    { value: 6, text: "没有影响" },
+                    { value: 5, text: "略有影响" },
+                    { value: 4, text: "影响一半" },
+                    { value: 3, text: "严重影响" },
+                    { value: 2, text: "非常严重影响" },
+                    { value: 1, text: "完全不能进行" },
+                ],
+            },
+             {
+                id: 10,
+                text: "在过去的4周里，您是否因为头痛不得不停止工作或日常活动？",
+                options: [
+                    { value: 6, text: "没有影响" },
+                    { value: 5, text: "略有影响" },
+                    { value: 4, text: "影响一半" },
+                    { value: 3, text: "严重影响" },
+                    { value: 2, text: "非常严重影响" },
+                    { value: 1, text: "完全不能进行" },
+                ],
+            },
+             {
+                id: 11,
+                text: "在过去的4周里，您是否因为偏头痛导致您无法参加社交活动，如聚会、与朋友共进晚餐？",
+                options: [
+                    { value: 6, text: "没有影响" },
+                    { value: 5, text: "略有影响" },
+                    { value: 4, text: "影响一半" },
+                    { value: 3, text: "严重影响" },
+                    { value: 2, text: "非常严重影响" },
+                    { value: 1, text: "完全不能进行" },
+                ],
+            },
+             {
+                id: 12,
+                text: "在过去的4周里，您是否因为偏头痛而感到厌倦或沮丧？",
+                options: [
+                    { value: 6, text: "没有影响" },
+                    { value: 5, text: "略有影响" },
+                    { value: 4, text: "影响一半" },
+                    { value: 3, text: "严重影响" },
+                    { value: 2, text: "非常严重影响" },
+                    { value: 1, text: "完全不能进行" },
+                ],
+            },
+             {
+                id: 13,
+                text: "在过去的4周里，您是否因为偏头痛而觉得自己是别人的负担？",
+                options: [
+                    { value: 6, text: "没有影响" },
+                    { value: 5, text: "略有影响" },
+                    { value: 4, text: "影响一半" },
+                    { value: 3, text: "严重影响" },
+                    { value: 2, text: "非常严重影响" },
+                    { value: 1, text: "完全不能进行" },
+                ],
+            },
+             {
+                id: 14,
+                text: "在过去的4周里，您是否你因为偏头痛而害怕让别人失望？",
+                options: [
+                    { value: 6, text: "没有影响" },
+                    { value: 5, text: "略有影响" },
+                    { value: 4, text: "影响一半" },
+                    { value: 3, text: "严重影响" },
+                    { value: 2, text: "非常严重影响" },
+                    { value: 1, text: "完全不能进行" },
+                ],
+            },
+                    // 更多问题...
+            ];
+    const msqForm = document.getElementById("msq-form");
+
+    function createQuestionDiv(question) {
+        const questionDiv = document.createElement("div");
+        questionDiv.className = "question";
+        questionDiv.id = `question-${question.id}`;
+
+        const questionTitle = document.createElement("h2");
+        questionTitle.textContent = question.text;
+        questionDiv.appendChild(questionTitle);
+
+        question.options.forEach((option) => {
+            const label = document.createElement("label");
+
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = `question-${question.id}`;
+            input.value = option.value;
+
+            input.onclick = () => {
+                const nextQuestion = document.getElementById(`question-${question.id + 1}`);
+                if (nextQuestion) {
+                    questionDiv.classList.remove("active");
+                    nextQuestion.classList.add("active");
+                } else {
+                    document.getElementById("submit-button").style.display = "block";
+                }
+            };
+
+            label.appendChild(input);
+
+            const checkmark = document.createElement("span");
+            checkmark.className = "checkmark";
+            label.appendChild(checkmark);
+
+            const optionText = document.createTextNode(option.text);
+            label.appendChild(optionText);
+
+            questionDiv.appendChild(label);
+        });
+
+        return questionDiv;
+    }
+
+    questions.forEach((question, index) => {
+        const questionDiv = createQuestionDiv(question);
+        if (index === 0) {
+            questionDiv.classList.add("active");
+        }
+        msqForm.appendChild(questionDiv);
+    });
+
+    function calculateScore() {
+        let score = 0;
+        questions.forEach((question) => {
+            const checkedOption = document.querySelector(`input[name="question-${question.id}"]:checked`);
+            if (checkedOption) {
+                score += parseInt(checkedOption.value);
+            }
+        });
+        return score;
+    }
+
+    function generateReport(score) {
+        // 根据MSQ 2.1问卷的分数，生成分析报告和建议
+        // 请根据您的需求修改这个函数
+        if (score < 40) {
+            return "在这个分数范围内，头痛对您的生活质量影响较大。您在工作、学习、家务、社交和娱乐等方面可能经常受到严重的限制。这意味着您的头痛状况需要紧急关注和治疗。请立即寻求医生的帮助，以便找到更有效的预防和治疗方法。与此同时，了解头痛的诱因，并尝试调整生活方式和心理应对策";
+        } else if (score < 70) {
+            return "在这个分数范围内，头痛对您的生活质量影响中等程度。在工作、学习、家务、社交和娱乐等方面，您可能会受到一定程度的困扰和限制。这可能意味着您的头痛状况需要进一步关注和治疗。寻求医生的建议，以便找到更有效的预防和缓解方法。同时，了解头痛的诱因，并尝试调整生活方式以减轻头痛对生活的影响。";
+        } else if (score < 90) {
+            return "在这个分数范围内，头痛对您的生活质量影响相对较小。尽管您可能会在工作、学习、家务、社交和娱乐等方面受到一定程度的影响，但这些影响通常是可以忍受和管理的。您可能已经采取了一些有效的预防和缓解措施，或者头痛的频率和严重程度相对较低。请继续关注您的头痛状况，观察是否有任何变化，并与医生保持联系以调整治疗方案。";
+        } else {
+            return "在这个分数范围内，头痛对您的生活质量影响非常小。您在工作、学习、家务、社交和娱乐等方面几乎没有受到头痛的困扰。这意味着您可能已经找到了有效的方式来预防和控制头痛，或者头痛的发作频率和严重程度较低。尽管如此，继续关注您的头痛状况，观察是否有任何变化，并保持与医生的沟通。";
+        }
+    }
+
+    function submitForm() {
+        const score = calculateScore();
+        const report = generateReport(score);
+        const resultDiv = document.getElementById("result");
+        resultDiv.textContent = `总分：${score}\n分析和建议：${report}`;
+        resultDiv.style.display = "block";
+    }
+</script>
+</body>
+</html>
+```
