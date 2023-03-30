@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://apis.google.com/js/api.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>头痛影响评估表单</title>
@@ -350,7 +351,53 @@
         resultDiv.textContent = `总分：${score}\n分析和建议：${report}`;
         resultDiv.style.display = "block";
     }
+        const clientId = '599561851756-ip72g8e6doabpqafovd43k05k7ucsqq7.apps.googleusercontent.com';
+        const apiKey = 'AIzaSyAmxRs7uquExECGc3NtmL8WLm-eKT4ooeA';
+        const scope = 'https://www.googleapis.com/auth/spreadsheets';
+        const sheetId = '1EohCB2obLvhEDhJJVl8XuzwnnbTRnUxTQE-7FOdFJjs';
+
+        function handleClientLoad() {
+        gapi.load('client:auth2', initClient);
+    }
+
+    function initClient() {
+      gapi.client.init({
+        apiKey: apiKey,
+        clientId: clientId,
+        scope: scope
+      }).then(() => {
+        gapi.auth2.getAuthInstance().isSignedIn.listen(updateSignInStatus);
+        updateSignInStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+      });
+    }
+
+    function updateSignInStatus(isSignedIn) {
+      if (isSignedIn) {
+        // 用户已登录，您可以调用将数据写入 Google Sheets 的函数
+      } else {
+        // 用户未登录，需要请求用户授权
+        gapi.auth2.getAuthInstance().signIn();
+      }
+    }
+
+    function writeToSheet(data) {
+      gapi.client.sheets.spreadsheets.values.append({
+        spreadsheetId: sheetId,
+        range: 'Sheet1!A1',
+        valueInputOption: 'RAW',
+        insertDataOption: 'INSERT_ROWS',
+        resource: {
+          values: [data]
+        }
+      }).then((response) => {
+        console.log('Data written to sheet:', response);
+      }, (error) => {
+        console.error('Error writing to sheet:', error);
+      });
+    }
+
 </script>
+
 </body>
 </html>
 ```
