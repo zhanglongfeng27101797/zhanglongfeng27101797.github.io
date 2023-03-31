@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://apis.google.com/js/api.js"></script>
+<script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()" onreadystatechange="if (this.readyState === 'complete') this.onload()"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>头痛影响评估表单</title>
@@ -344,19 +344,12 @@
         }
     }
 
-    function submitForm() {
-        const score = calculateScore();
-        const report = generateReport(score);
-        const resultDiv = document.getElementById("result");
-        resultDiv.textContent = `总分：${score}\n分析和建议：${report}`;
-        resultDiv.style.display = "block";
-    }
         const clientId = '599561851756-ip72g8e6doabpqafovd43k05k7ucsqq7.apps.googleusercontent.com';
         const apiKey = 'AIzaSyAmxRs7uquExECGc3NtmL8WLm-eKT4ooeA';
         const scope = 'https://www.googleapis.com/auth/spreadsheets';
         const sheetId = '1EohCB2obLvhEDhJJVl8XuzwnnbTRnUxTQE-7FOdFJjs';
 
-        function handleClientLoad() {
+    function handleClientLoad() {
         gapi.load('client:auth2', initClient);
     }
 
@@ -395,6 +388,21 @@
         console.error('Error writing to sheet:', error);
       });
     }
+
+        function submitForm() {
+        const score = calculateScore();
+        const report = generateReport(score);
+        const resultDiv = document.getElementById("result");
+        resultDiv.innerHTML = '<h2>您的评分：</h2>' + score + '<br/><h2>评估报告：</h2>' + report;
+        resultDiv.style.display = "block";
+        // 将数据写入Google Sheets
+        writeToSheet([new Date().toISOString(), score, report]);
+
+    }
+           // 省略其他函数代码，如calculateScore和generateReport
+
+           // 初始化并渲染表单
+           renderForm(msq);
 
 </script>
 
