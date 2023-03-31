@@ -354,15 +354,17 @@
     }
 
     function initClient() {
-      gapi.client.init({
-        apiKey: apiKey,
-        clientId: clientId,
-        scope: scope
-      }).then(() => {
-        gapi.auth2.getAuthInstance().isSignedIn.listen(updateSignInStatus);
-        updateSignInStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-      });
-    }
+        gapi.client.init({
+    apiKey: apiKey,
+    clientId: clientId,
+    scope: scope
+  }).then(() => {
+    console.log('gapi.client initialized:', gapi.client); // 添加这行
+    gapi.auth2.getAuthInstance().isSignedIn.listen(updateSignInStatus);
+    updateSignInStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+  });
+}
+
 
     function submitForm() {
     const score = calculateScore();
@@ -409,7 +411,6 @@ function updateSignInStatus(isSignedIn) {
            // 省略其他函数代码，如calculateScore和generateReport
 
            // 初始化并渲染表单
-           renderForm(msq);
 
 </script>
 
