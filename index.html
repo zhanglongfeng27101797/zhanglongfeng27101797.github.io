@@ -364,14 +364,29 @@
       });
     }
 
-    function updateSignInStatus(isSignedIn) {
-      if (isSignedIn) {
+    function submitForm() {
+    const score = calculateScore();
+    const report = generateReport(score);
+    const data = [new Date().toISOString(), score, report];
+    
+    const resultDiv = document.getElementById("result");
+    resultDiv.innerHTML = '<h2>您的评分：</h2>' + score + '<br/><h2>评估报告：</h2>' + report;
+    resultDiv.style.display = "block";
+    
+    // 将数据写入Google Sheets
+    writeToSheet(data);
+}
+
+function updateSignInStatus(isSignedIn) {
+    if (isSignedIn) {
         // 用户已登录，您可以调用将数据写入 Google Sheets 的函数
-      } else {
+        submitForm(); // 在这里调用 submitForm 函数
+    } else {
         // 用户未登录，需要请求用户授权
         gapi.auth2.getAuthInstance().signIn();
-      }
     }
+}
+
 
     function writeToSheet(data) {
       gapi.client.sheets.spreadsheets.values.append({
@@ -389,16 +404,8 @@
       });
     }
 
-        function submitForm() {
-        const score = calculateScore();
-        const report = generateReport(score);
-        const resultDiv = document.getElementById("result");
-        resultDiv.innerHTML = '<h2>您的评分：</h2>' + score + '<br/><h2>评估报告：</h2>' + report;
-        resultDiv.style.display = "block";
-        // 将数据写入Google Sheets
-        writeToSheet([new Date().toISOString(), score, report]);
 
-    }
+
            // 省略其他函数代码，如calculateScore和generateReport
 
            // 初始化并渲染表单
